@@ -1,184 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PureDrop Cleaner</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #e0f7fa;
-        }
-        canvas {
-            border: 2px solid #000;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PureDrop Cleaner</title>
+  <style>
+    body {
+      margin: 0;
+      background: #e0f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    canvas {
+      border: 2px solid black;
+      background-color: #caeaff;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="480" height="800"></canvas>
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+  <canvas id="gameCanvas" width="480" height="800"></canvas>
 
-        // Screen dimensions
-        const WIDTH = 480, HEIGHT = 800;
-        
-        // Colors
-        const WHITE = "white";
-        const RED = "red";
-        const GREEN = "green";
-        const BLUE = "blue";
-        const COLORS = [RED, GREEN, BLUE];
-        
-        // Game variables
-        let score = 0;
-        let activeColorIndex = 0;
-        let drop = new Drop(COLORS[activeColorIndex]);
-        let dirtyWater = [];
-        let lastDropTime = 0;
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-        // Drop class
-        class Drop {
-            constructor(color) {
-                this.color = color;
-                this.x = WIDTH / 2;
-                this.y = HEIGHT - 100;
-                this.width = 50;
-                this.height = 70;
-                this.speed = 5;
-                this.face = ":D";
-            }
+    const WIDTH = 480, HEIGHT = 800;
+    const COLORS = ["red", "green", "blue"];
+    const WHITE = "white";
 
-            moveLeft() {
-                if (this.x > 0) {
-                    this.x -= this.speed;
-                }
-            }
+    let score = 0;
+    let activeColorIndex = 0;
+    let drop = new Drop(COLORS[activeColorIndex]);
+    let dirtyWater = [];
+    let lastDropTime = Date.now();
+    const keys = { left: false, right: false };
 
-            moveRight() {
-                if (this.x < WIDTH - this.width) {
-                    this.x += this.speed;
-                }
-            }
+    class Drop {
+      constructor(color) {
+        this.color = color;
+        this.x = WIDTH / 2 - 25;
+        this.y = HEIGHT - 100;
+        this.width = 50;
+        this.height = 70;
+        this.speed = 5;
+      }
 
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.ellipse(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, this.height / 2, 0, 0, 2 * Math.PI);
-                ctx.fill();
-                ctx.fillStyle = WHITE;
-                ctx.font = "24px Arial";
-                ctx.fillText(this.face, this.x + 15, this.y + 35);
-            }
+      moveLeft() {
+        this.x = Math.max(0, this.x - this.speed);
+      }
+
+      moveRight() {
+        this.x = Math.min(WIDTH - this.width, this.x + this.speed);
+      }
+
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/2, this.height/2, 0, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.fillStyle = WHITE;
+        ctx.font = "24px Arial";
+        ctx.fillText(":D", this.x + 12, this.y + 42);
+      }
+    }
+
+    class DirtyWater {
+      constructor() {
+        this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        this.x = Math.random() * (WIDTH - 60);
+        this.y = -60;
+        this.width = 60;
+        this.height = 60;
+        this.speed = Math.random() * 2 + 2;
+      }
+
+      update() {
+        this.y += this.speed;
+      }
+
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+      }
+    }
+
+    function isCollision(drop, water) {
+      return drop.x < water.x + water.width &&
+             drop.x + drop.width > water.x &&
+             drop.y < water.y + water.height &&
+             drop.y + drop.height > water.y;
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+      // Input
+      if (keys.left) drop.moveLeft();
+      if (keys.right) drop.moveRight();
+
+      // Spawn new water
+      if (Date.now() - lastDropTime > 1000) {
+        dirtyWater.push(new DirtyWater());
+        lastDropTime = Date.now();
+      }
+
+      // Update water and check collision
+      for (let i = dirtyWater.length - 1; i >= 0; i--) {
+        const water = dirtyWater[i];
+        water.update();
+
+        if (water.y > HEIGHT) {
+          dirtyWater.splice(i, 1);
+        } else if (isCollision(drop, water)) {
+          if (water.color === drop.color) {
+            score++;
+            dirtyWater.splice(i, 1);
+          }
+        } else {
+          water.draw();
         }
+      }
 
-        // Dirty Water class
-        class DirtyWater {
-            constructor() {
-                this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-                this.x = Math.random() * (WIDTH - 60);
-                this.y = -60;
-                this.width = 60;
-                this.height = 60;
-                this.speed = Math.random() * 2 + 2;
-            }
+      drop.draw();
 
-            update() {
-                this.y += this.speed;
-            }
+      // Draw score
+      ctx.fillStyle = "black";
+      ctx.font = "24px Arial";
+      ctx.fillText("Score: " + score, 10, 30);
+      ctx.fillText("← → to move | SPACE to switch drop", 10, HEIGHT - 40);
 
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-            }
-        }
+      requestAnimationFrame(gameLoop);
+    }
 
-        // Game loop
-        function gameLoop() {
-            ctx.clearRect(0, 0, WIDTH, HEIGHT);
-            
-            // Handle dirty water spawning
-            const currentTime = Date.now();
-            if (currentTime - lastDropTime > 1000) {
-                dirtyWater.push(new DirtyWater());
-                lastDropTime = currentTime;
-            }
+    // Controls
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") keys.left = true;
+      if (e.key === "ArrowRight") keys.right = true;
+      if (e.key === " ") {
+        activeColorIndex = (activeColorIndex + 1) % COLORS.length;
+        drop = new Drop(COLORS[activeColorIndex]);
+      }
+    });
 
-            // Handle movement based on keys
-            if (keys.left) drop.moveLeft();
-            if (keys.right) drop.moveRight();
+    document.addEventListener("keyup", (e) => {
+      if (e.key === "ArrowLeft") keys.left = false;
+      if (e.key === "ArrowRight") keys.right = false;
+    });
 
-            // Check for collisions
-            for (let i = dirtyWater.length - 1; i >= 0; i--) {
-                let water = dirtyWater[i];
-                water.update();
-                if (water.y > HEIGHT) {
-                    dirtyWater.splice(i, 1);
-                }
-
-                if (isCollision(drop, water)) {
-                    if (water.color === drop.color) {
-                        dirtyWater.splice(i, 1);
-                        score++;
-                    }
-                }
-                water.draw();
-            }
-
-            // Draw the drop
-            drop.draw();
-
-            // Draw score
-            ctx.fillStyle = "black";
-            ctx.font = "24px Arial";
-            ctx.fillText(`Score: ${score}`, 10, 30);
-
-            // Draw instructions
-            ctx.fillText("← → to move | SPACE to switch drop", 10, HEIGHT - 40);
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Collision detection
-        function isCollision(drop, water) {
-            return drop.x < water.x + water.width &&
-                   drop.x + drop.width > water.x &&
-                   drop.y < water.y + water.height &&
-                   drop.y + drop.height > water.y;
-        }
-
-        // Handle key events
-        const keys = { left: false, right: false, space: false };
-
-        window.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowLeft") {
-                keys.left = true;
-            } else if (event.key === "ArrowRight") {
-                keys.right = true;
-            } else if (event.key === " ") {
-                keys.space = true;
-                // Switch color
-                activeColorIndex = (activeColorIndex + 1) % COLORS.length;
-                drop = new Drop(COLORS[activeColorIndex]);
-            }
-        });
-
-        window.addEventListener("keyup", (event) => {
-            if (event.key === "ArrowLeft") {
-                keys.left = false;
-            } else if (event.key === "ArrowRight") {
-                keys.right = false;
-            } else if (event.key === " ") {
-                keys.space = false;
-            }
-        });
-
-        // Start the game
-        gameLoop();
-    </script>
+    // Start
+    gameLoop();
+  </script>
 </body>
 </html>
