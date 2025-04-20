@@ -1,157 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PureDrop Cleaner</title>
-  <style>
-    body {
-      margin: 0;
-      background: #e0f7fa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    canvas {
-      border: 2px solid black;
-      background-color: #caeaff;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="gameCanvas" width="480" height="800"></canvas>
+# PureDrop Purify Game (Python Version using Pygame)
+import pygame
+import random
+import sys
 
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+# Initialize Pygame
+pygame.init()
 
-    const WIDTH = 480, HEIGHT = 800;
-    const COLORS = ["red", "green", "blue"];
-    const WHITE = "white";
+# Screen dimensions
+WIDTH, HEIGHT = 600, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("PureDrop Purify Game")
 
-    let score = 0;
-    let activeColorIndex = 0;
-    let drop = new Drop(COLORS[activeColorIndex]);
-    let dirtyWater = [];
-    let lastDropTime = Date.now();
-    const keys = { left: false, right: false };
+# Colors
+BLUE = (173, 216, 230)
+YELLOW = (255, 253, 208)
+DIRTY_GREEN = (105, 240, 174)
+CLEAN_BLUE = (0, 191, 255)
+WHITE = (255, 255, 255)
+TEXT_COLOR = (0, 121, 107)
 
-    class Drop {
-      constructor(color) {
-        this.color = color;
-        this.x = WIDTH / 2 - 25;
-        this.y = HEIGHT - 100;
-        this.width = 50;
-        this.height = 70;
-        this.speed = 5;
-      }
+# Font
+font = pygame.font.SysFont(None, 36)
 
-      moveLeft() {
-        this.x = Math.max(0, this.x - this.speed);
-      }
+# Game variables
+score = 0
+clock = pygame.time.Clock()
+droplets = []
+DROPLET_SIZE = 40
+TIME_LIMIT = 60  # seconds
+start_ticks = pygame.time.get_ticks()
 
-      moveRight() {
-        this.x = Math.min(WIDTH - this.width, this.x + this.speed);
-      }
+# Droplet class
+class Droplet:
+    def __init__(self):
+        self.x = random.randint(0, WIDTH - DROPLET_SIZE)
+        self.y = random.randint(0, HEIGHT - DROPLET_SIZE)
+        self.dirty = random.choice([True, False])
+        self.color = DIRTY_GREEN if self.dirty else CLEAN_BLUE
+        self.rect = pygame.Rect(self.x, self.y, DROPLET_SIZE, DROPLET_SIZE)
 
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/2, this.height/2, 0, 0, 2 * Math.PI);
-        ctx.fill();
+    def draw(self):
+        pygame.draw.ellipse(screen, self.color, self.rect)
 
-        ctx.fillStyle = WHITE;
-        ctx.font = "24px Arial";
-        ctx.fillText(":D", this.x + 12, this.y + 42);
-      }
-    }
+# Main loop
+running = True
+spawn_event = pygame.USEREVENT + 1
+pygame.time.set_timer(spawn_event, 800)
 
-    class DirtyWater {
-      constructor() {
-        this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        this.x = Math.random() * (WIDTH - 60);
-        this.y = -60;
-        this.width = 60;
-        this.height = 60;
-        this.speed = Math.random() * 2 + 2;
-      }
+while running:
+    screen.fill(YELLOW)
+    seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+    time_left = max(0, TIME_LIMIT - seconds)
 
-      update() {
-        this.y += this.speed;
-      }
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-      }
-    }
+        if event.type == spawn_event and time_left > 0:
+            droplets.append(Droplet())
 
-    function isCollision(drop, water) {
-      return drop.x < water.x + water.width &&
-             drop.x + drop.width > water.x &&
-             drop.y < water.y + water.height &&
-             drop.y + drop.height > water.y;
-    }
+        if event.type == pygame.MOUSEBUTTONDOWN and time_left > 0:
+            for droplet in droplets[:]:
+                if droplet.rect.collidepoint(event.pos):
+                    if droplet.dirty:
+                        score += 1
+                    droplets.remove(droplet)
 
-    function gameLoop() {
-      ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    for droplet in droplets:
+        droplet.draw()
 
-      // Input
-      if (keys.left) drop.moveLeft();
-      if (keys.right) drop.moveRight();
+    # Draw score and timer
+    score_text = font.render(f"Score: {score}", True, TEXT_COLOR)
+    timer_text = font.render(f"Time Left: {time_left}s", True, TEXT_COLOR)
+    screen.blit(score_text, (10, 10))
+    screen.blit(timer_text, (10, 50))
 
-      // Spawn new water
-      if (Date.now() - lastDropTime > 1000) {
-        dirtyWater.push(new DirtyWater());
-        lastDropTime = Date.now();
-      }
+    if time_left == 0:
+        result_text = font.render(f"Time's up! Final Score: {score}", True, TEXT_COLOR)
+        screen.blit(result_text, (WIDTH // 2 - result_text.get_width() // 2, HEIGHT // 2))
 
-      // Update water and check collision
-      for (let i = dirtyWater.length - 1; i >= 0; i--) {
-        const water = dirtyWater[i];
-        water.update();
+    pygame.display.flip()
+    clock.tick(60)
 
-        if (water.y > HEIGHT) {
-          dirtyWater.splice(i, 1);
-        } else if (isCollision(drop, water)) {
-          if (water.color === drop.color) {
-            score++;
-            dirtyWater.splice(i, 1);
-          }
-        } else {
-          water.draw();
-        }
-      }
-
-      drop.draw();
-
-      // Draw score
-      ctx.fillStyle = "black";
-      ctx.font = "24px Arial";
-      ctx.fillText("Score: " + score, 10, 30);
-      ctx.fillText("← → to move | SPACE to switch drop", 10, HEIGHT - 40);
-
-      requestAnimationFrame(gameLoop);
-    }
-
-    // Controls
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") keys.left = true;
-      if (e.key === "ArrowRight") keys.right = true;
-      if (e.key === " ") {
-        activeColorIndex = (activeColorIndex + 1) % COLORS.length;
-        drop = new Drop(COLORS[activeColorIndex]);
-      }
-    });
-
-    document.addEventListener("keyup", (e) => {
-      if (e.key === "ArrowLeft") keys.left = false;
-      if (e.key === "ArrowRight") keys.right = false;
-    });
-
-    // Start
-    gameLoop();
-  </script>
-</body>
-</html>
+pygame.quit()
+sys.exit()
