@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PureDrop Purify Game</title>
+  <style>
+    body {
+      background-color: #e0f7fa;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #gameContainer {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      margin: 0 auto;
+      background-color: #fff8e1;
+      border: 2px solid #b2ebf2;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .droplet {
+      position: absolute;
+      width: 40px;
+      height: 60px;
+      background-color: blue;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .dirty {
+      background-color: #69f0ae; /* greenish */
+    }
+
+    #score, #timer {
+      font-size: 1.2em;
+      margin: 10px;
+    }
+
+    #result {
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: #00796b;
+    }
+  </style>
+</head>
+<body>
+  <h1>PureDrop Purify Game</h1>
+  <p>Click on the **dirty droplets** to purify them!</p>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time Left: 60s</div>
+  <div id="gameContainer"></div>
+  <div id="result"></div>
+
+  <script>
+    const gameContainer = document.getElementById('gameContainer');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const resultDisplay = document.getElementById('result');
+    let score = 0;
+    let timeLeft = 60;
+    let gameInterval, dropInterval;
+
+    function startGame() {
+      gameInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+
+      dropInterval = setInterval(spawnDroplet, 800);
+    }
+
+    function spawnDroplet() {
+      const droplet = document.createElement('div');
+      droplet.classList.add('droplet');
+
+      const isDirty = Math.random() < 0.5;
+      if (isDirty) droplet.classList.add('dirty');
+
+      const x = Math.random() * (gameContainer.offsetWidth - 40);
+      const y = Math.random() * (gameContainer.offsetHeight - 60);
+      droplet.style.left = `${x}px`;
+      droplet.style.top = `${y}px`;
+
+      droplet.addEventListener('click', () => {
+        if (isDirty) {
+          score++;
+          scoreDisplay.textContent = `Score: ${score}`;
+        }
+        gameContainer.removeChild(droplet);
+      });
+
+      gameContainer.appendChild(droplet);
+
+      setTimeout(() => {
+        if (gameContainer.contains(droplet)) {
+          gameContainer.removeChild(droplet);
+        }
+      }, 1500);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(dropInterval);
+      resultDisplay.textContent = `Time's up! Your score: ${score}`;
+      const droplets = document.querySelectorAll('.droplet');
+      droplets.forEach(drop => drop.remove());
+    }
+
+    // Start the game
+    startGame();
+  </script>
+</body>
+</html>
