@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PureDrop Purify Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
   <style>
     body {
       background-color: #e0f7fa;
-      font-family: Arial, sans-serif;
+      font-family: 'Bubblegum Sans', cursive;
       text-align: center;
       padding: 20px;
     }
@@ -22,20 +23,21 @@
       border: 2px solid #b2ebf2;
       border-radius: 10px;
       overflow: hidden;
+      display: none;
     }
 
     .droplet {
       position: absolute;
       width: 40px;
       height: 60px;
-      background-color: blue;
+      background: blue;
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       cursor: pointer;
       transition: transform 0.2s;
     }
 
     .dirty {
-      background-color: #69f0ae; /* greenish */
+      background: radial-gradient(circle at 10px 10px, green 4px, blue 5px);
     }
 
     #score, #timer {
@@ -48,26 +50,52 @@
       margin-top: 20px;
       color: #00796b;
     }
+
+    button {
+      font-family: 'Bubblegum Sans', cursive;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background-color: #b2ebf2;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>PureDrop Purify Game</h1>
-  <p>Click on the **dirty droplets** to purify them!</p>
+  <p>Click on the <strong>green-dotted blue droplets</strong> to purify them! The normal blue ones are already clean!</p>
+
+  <button id="startButton">Start Game</button>
   <div id="score">Score: 0</div>
   <div id="timer">Time Left: 60s</div>
   <div id="gameContainer"></div>
   <div id="result"></div>
+  <button id="replayButton" style="display:none">Play Again</button>
 
   <script>
     const gameContainer = document.getElementById('gameContainer');
     const scoreDisplay = document.getElementById('score');
     const timerDisplay = document.getElementById('timer');
     const resultDisplay = document.getElementById('result');
+    const startButton = document.getElementById('startButton');
+    const replayButton = document.getElementById('replayButton');
+
     let score = 0;
     let timeLeft = 60;
     let gameInterval, dropInterval;
 
     function startGame() {
+      score = 0;
+      timeLeft = 60;
+      scoreDisplay.textContent = `Score: ${score}`;
+      timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+      resultDisplay.textContent = '';
+      startButton.style.display = 'none';
+      replayButton.style.display = 'none';
+      gameContainer.style.display = 'block';
+
       gameInterval = setInterval(() => {
         timeLeft--;
         timerDisplay.textContent = `Time Left: ${timeLeft}s`;
@@ -110,12 +138,15 @@
       clearInterval(gameInterval);
       clearInterval(dropInterval);
       resultDisplay.textContent = `Time's up! Your score: ${score}`;
+      replayButton.style.display = 'inline-block';
+      gameContainer.style.display = 'none';
+
       const droplets = document.querySelectorAll('.droplet');
       droplets.forEach(drop => drop.remove());
     }
 
-    // Start the game
-    startGame();
+    startButton.addEventListener('click', startGame);
+    replayButton.addEventListener('click', startGame);
   </script>
 </body>
 </html>
