@@ -15,46 +15,44 @@
 
     header {
       background-color: #b3e5fc; /* pastel blue */
-      text-align: center;
       padding: 20px;
+      text-align: center;
       font-size: 2em;
       color: #01579b;
     }
 
-    nav {
+    .tab-buttons {
       display: flex;
       justify-content: center;
       background-color: #b3e5fc;
       padding: 10px;
+      gap: 10px;
     }
 
-    nav a {
-      margin: 0 15px;
-      text-decoration: none;
-      color: #01579b;
-      font-weight: bold;
+    .tab-buttons button {
+      font-family: 'Bubblegum Sans', cursive;
+      padding: 10px 20px;
       font-size: 1.2em;
+      border: 2px solid #01579b;
+      border-radius: 20px;
+      background-color: white;
+      color: #01579b;
       cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
     }
 
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 20px;
-      gap: 20px;
+    .tab-buttons button:hover {
+      background-color: #81d4fa;
+      color: white;
     }
 
     .section {
-      flex: 1;
-      min-width: 300px;
-      background-color: #ffffff;
+      display: none;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .active-section {
+      display: block;
     }
 
     #informationSection img {
@@ -102,7 +100,7 @@
       color: #00796b;
     }
 
-    button {
+    button.game-button {
       font-family: 'Bubblegum Sans', cursive;
       padding: 10px 20px;
       font-size: 1.2em;
@@ -120,36 +118,38 @@
   Welcome to My Website!
 </header>
 
-<nav>
-  <a onclick="scrollToSection('informationSection')">Information</a>
-  <a onclick="scrollToSection('gameSection')">PureDrop Game</a>
-</nav>
+<div class="tab-buttons">
+  <button onclick="showSection('informationSection')">Information</button>
+  <button onclick="showSection('gameSection')">PureDrop Game</button>
+</div>
 
-<div class="container">
-  <!-- Information Section -->
-  <div class="section" id="informationSection">
-    <h2>Information Section</h2>
-    <p>Welcome! This is where you can add any text, articles, or images you like.</p>
-    <img src="https://via.placeholder.com/400x200.png?text=Your+Image+Here" alt="Placeholder Image">
-  </div>
+<!-- Sections -->
+<div id="informationSection" class="section active-section">
+  <h2>Information Section</h2>
+  <p>Welcome! This is where you can add any text, articles, or images you like.</p>
+  <img src="https://via.placeholder.com/400x200.png?text=Your+Image+Here" alt="Placeholder Image">
+</div>
 
-  <!-- Game Section -->
-  <div class="section" id="gameSection">
-    <h2>PureDrop Purify Game</h2>
-    <p>Click on the <strong>green-dotted blue droplets</strong> to purify them! The normal blue ones are already clean!</p>
+<div id="gameSection" class="section">
+  <h2>PureDrop Purify Game</h2>
+  <p>Click on the <strong>green-dotted blue droplets</strong> to purify them! The normal blue ones are already clean!</p>
 
-    <button id="startButton">Start Game</button>
-    <div id="score">Score: 0</div>
-    <div id="timer">Time Left: 60s</div>
-    <div id="gameContainer"></div>
-    <div id="result"></div>
-    <button id="replayButton" style="display:none">Play Again</button>
-  </div>
+  <button id="startButton" class="game-button">Start Game</button>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time Left: 60s</div>
+  <div id="gameContainer"></div>
+  <div id="result"></div>
+  <button id="replayButton" class="game-button" style="display:none">Play Again</button>
 </div>
 
 <script>
-  function scrollToSection(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  function showSection(sectionId) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+      section.classList.remove('active-section');
+    });
+    document.getElementById(sectionId).classList.add('active-section');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // Game Script
