@@ -6,6 +6,10 @@
   <title>My Website - Information & PureDrop Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       font-family: 'Bubblegum Sans', cursive;
@@ -27,6 +31,9 @@
       background-color: #b3e5fc;
       padding: 10px;
       gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     .tab-buttons button {
@@ -46,28 +53,30 @@
       color: white;
     }
 
-    .section {
-      display: none;
-      padding: 20px;
+    section {
+      padding: 50px 20px;
+      min-height: 100vh;
     }
 
-    .active-section {
-      display: block;
+    #information {
+      background-color: #fff9c4; /* pastel yellow */
     }
 
-    #informationSection img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-top: 10px;
+    #game {
+      background-color: #e0f7fa; /* pastel blue */
     }
 
-    /* Game specific styles */
+    #game h2, #information h2 {
+      text-align: center;
+    }
+
+    /* Game styles */
     #gameContainer {
       position: relative;
       width: 100%;
       max-width: 600px;
       height: 400px;
-      margin: 0 auto;
+      margin: 20px auto;
       background-color: #fff8e1;
       border: 2px solid #b2ebf2;
       border-radius: 10px;
@@ -92,12 +101,14 @@
     #score, #timer {
       font-size: 1.2em;
       margin: 10px;
+      text-align: center;
     }
 
     #result {
       font-size: 1.5em;
       margin-top: 20px;
       color: #00796b;
+      text-align: center;
     }
 
     button.game-button {
@@ -108,7 +119,8 @@
       border-radius: 10px;
       background-color: #b2ebf2;
       cursor: pointer;
-      margin-top: 10px;
+      margin: 20px auto;
+      display: block;
     }
   </style>
 </head>
@@ -119,20 +131,20 @@
 </header>
 
 <div class="tab-buttons">
-  <button onclick="showSection('informationSection')">Information</button>
-  <button onclick="showSection('gameSection')">PureDrop Game</button>
+  <button onclick="scrollToSection('information')">Information</button>
+  <button onclick="scrollToSection('game')">PureDrop Game</button>
 </div>
 
-<!-- Sections -->
-<div id="informationSection" class="section active-section">
+<!-- Information Section -->
+<section id="information">
   <h2>Information Section</h2>
-  <p>Welcome! This is where you can add any text, articles, or images you like.</p>
-  <img src="https://via.placeholder.com/400x200.png?text=Your+Image+Here" alt="Placeholder Image">
-</div>
+  <p>Add your text, articles, or images here!</p>
+</section>
 
-<div id="gameSection" class="section">
+<!-- Game Section -->
+<section id="game">
   <h2>PureDrop Purify Game</h2>
-  <p>Click on the <strong>green-dotted blue droplets</strong> to purify them! The normal blue ones are already clean!</p>
+  <p style="text-align:center;">Click on the <strong>green-dotted blue droplets</strong> to purify them! The normal blue ones are already clean!</p>
 
   <button id="startButton" class="game-button">Start Game</button>
   <div id="score">Score: 0</div>
@@ -140,16 +152,12 @@
   <div id="gameContainer"></div>
   <div id="result"></div>
   <button id="replayButton" class="game-button" style="display:none">Play Again</button>
-</div>
+</section>
 
 <script>
-  function showSection(sectionId) {
-    const sections = document.querySelectorAll('.section');
-    sections.forEach(section => {
-      section.classList.remove('active-section');
-    });
-    document.getElementById(sectionId).classList.add('active-section');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    section.scrollIntoView({ behavior: 'smooth' });
   }
 
   // Game Script
