@@ -69,7 +69,7 @@
       text-align: center;
     }
 
-    /* Game styles */
+    /* Game Styles */
     #gameContainer {
       position: relative;
       width: 100%;
@@ -87,14 +87,21 @@
       position: absolute;
       width: 40px;
       height: 60px;
-      background: blue;
+      background: radial-gradient(circle at 20px 10px, #b3e5fc 20%, #81d4fa 60%);
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       cursor: pointer;
+      box-shadow: inset 0 0 5px rgba(0, 191, 255, 0.5);
       transition: transform 0.2s;
     }
 
     .dirty {
-      background: radial-gradient(circle at 10px 10px, green 4px, blue 5px);
+      background: radial-gradient(circle at 10px 10px, #66bb6a 4px, transparent 5px),
+                  radial-gradient(circle at 25px 20px, #66bb6a 4px, transparent 5px),
+                  radial-gradient(circle at 15px 40px, #66bb6a 5px, transparent 6px),
+                  radial-gradient(circle at 30px 50px, #66bb6a 4px, transparent 5px),
+                  radial-gradient(circle at 20px 30px, #66bb6a 4px, transparent 5px),
+                  radial-gradient(circle at 20px 10px, #b3e5fc 20%, #81d4fa 60%);
+      background-size: cover;
     }
 
     #score, #timer {
