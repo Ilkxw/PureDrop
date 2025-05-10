@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PureDrop - Information & Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PureDrop</title>
   <style>
     html {
       scroll-behavior: smooth;
@@ -11,64 +11,57 @@
 
     body {
       margin: 0;
-      font-family: 'Times New Roman', Times, serif;
-      background-color: #fff9c4; /* pastel yellow */
-      color: #333;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #ffffff;
+      color: #003366;
     }
 
     header {
-      background-color: #b3e5fc; /* pastel blue */
-      padding: 20px;
-      text-align: center;
-      color: #01579b;
-    }
-
-    .tab-buttons {
       display: flex;
-      justify-content: center;
-      background-color: #b3e5fc;
-      padding: 10px;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 10%;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       position: sticky;
       top: 0;
       z-index: 1000;
     }
 
-    .tab-buttons button {
-      font-family: 'Times New Roman', Times, serif;
-      padding: 10px 20px;
-      font-size: 1.2em;
-      border: 2px solid #01579b;
-      border-radius: 20px;
-      background-color: white;
-      color: #01579b;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s;
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #003366;
     }
 
-    .tab-buttons button:hover {
-      background-color: #81d4fa;
-      color: white;
+    nav a {
+      margin-left: 30px;
+      text-decoration: none;
+      color: #003366;
+      font-weight: bold;
+    }
+
+    .hero-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      display: block;
     }
 
     section {
-      padding: 50px 20px;
-      min-height: 100vh;
+      padding: 60px 10%;
     }
 
     #information {
-      background-color: #fff9c4; /* pastel yellow */
+      background-color: #f0f8ff;
+      border-radius: 10px;
     }
 
     #game {
-      background-color: #e0f7fa; /* pastel blue */
+      background-color: #e3f2fd;
+      border-radius: 10px;
     }
 
-    #game h2, #information h2 {
-      text-align: center;
-    }
-
-    /* Game Styles */
     #gameContainer {
       position: relative;
       width: 100%;
@@ -103,146 +96,136 @@
       background-size: cover;
     }
 
-    #score, #timer {
+    #score, #timer, #result {
       font-size: 1.2em;
       margin: 10px;
-      text-align: center;
+      color: #01579b;
     }
 
     #result {
       font-size: 1.5em;
-      margin-top: 20px;
       color: #00796b;
-      text-align: center;
+      margin-top: 20px;
     }
 
-    button.game-button {
-      font-family: 'Times New Roman', Times, serif;
+    .game-button {
+      font-family: Arial, Helvetica, sans-serif;
       padding: 10px 20px;
       font-size: 1.2em;
       border: none;
       border-radius: 10px;
-      background-color: #b2ebf2;
+      background-color: #4fc3f7;
+      color: #fff;
       cursor: pointer;
-      margin: 20px auto;
-      display: block;
+      margin-top: 20px;
+    }
+
+    .game-button:hover {
+      background-color: #039be5;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div style="font-size: 2.5em; font-weight: bold;">PureDrop</div>
-  <div style="font-size: 1.2em; margin-top: 5px;">One Drop, Big Difference</div>
-</header>
+  <header>
+    <div class="logo">PUREDROP</div>
+    <nav>
+      <a href="#information">Information</a>
+      <a href="#game">Game</a>
+    </nav>
+  </header>
 
-<div class="tab-buttons">
-  <button onclick="scrollToSection('information')">Information</button>
-  <button onclick="scrollToSection('game')">PureDrop Game</button>
-</div>
+  <img class="hero-image" src="https://s-media-cache-ak0.pinimg.com/originals/04/c9/fc/04c9fcff13c4b4ec282f537ae43016bc.jpg" alt="Clean water image" />
 
-<!-- Information Section -->
-<section id="information">
-  <h2>Information Section</h2>
-  <bold size="10">Our mission</bold>
-  <p>Water pollution affects millions worldwide, denying access to safe, drinkable water. PureDrop, a forward-thinking company from Azerbaijan, offers an effective solution: a fast-acting, eco-friendly powder that removes harmful contaminants and purifies water in minutes. Designed to be affordable and easy to use, it’s ideal for communities in need, emergency situations, and everyday use. Whether in rural areas, disaster zones, or outdoor settings, PureDrop makes clean water accessible, restoring health and hope—one drop at a time.
-  </p>
-  <img width="50%" src="https://amaka.studio/_next/image?url=https%3A%2F%2Famaka-s3-bucket-prod.s3.amazonaws.com%2F048f67cf99184e5b8566ff7b45b7ec0e_702179deb6.jpg&w=3840&q=75"/>
+  <section id="information">
+    <h2>Information</h2>
+    <p>Input your text here.</p>
+  </section>
 
-</section>
+  <section id="game">
+    <h2>PureDrop Purify Game</h2>
+    <button id="startButton" class="game-button">Start Game</button>
+    <div id="score">Score: 0</div>
+    <div id="timer">Time Left: 60s</div>
+    <div id="gameContainer"></div>
+    <div id="result"></div>
+    <button id="replayButton" class="game-button" style="display:none">Play Again</button>
+  </section>
 
-<!-- Game Section -->
-<section id="game">
-  <h2>PureDrop Purify Game</h2>
+  <script>
+    const gameContainer = document.getElementById('gameContainer');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const resultDisplay = document.getElementById('result');
+    const startButton = document.getElementById('startButton');
+    const replayButton = document.getElementById('replayButton');
 
-  <button id="startButton" class="game-button">Start Game</button>
-  <div id="score">Score: 0</div>
-  <div id="timer">Time Left: 60s</div>
-  <div id="gameContainer"></div>
-  <div id="result"></div>
-  <button id="replayButton" class="game-button" style="display:none">Play Again</button>
-</section>
+    let score = 0;
+    let timeLeft = 60;
+    let gameInterval, dropInterval;
 
-<script>
-  function scrollToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    section.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // Game Script
-  const gameContainer = document.getElementById('gameContainer');
-  const scoreDisplay = document.getElementById('score');
-  const timerDisplay = document.getElementById('timer');
-  const resultDisplay = document.getElementById('result');
-  const startButton = document.getElementById('startButton');
-  const replayButton = document.getElementById('replayButton');
-
-  let score = 0;
-  let timeLeft = 60;
-  let gameInterval, dropInterval;
-
-  function startGame() {
-    score = 0;
-    timeLeft = 60;
-    scoreDisplay.textContent = `Score: ${score}`;
-    timerDisplay.textContent = `Time Left: ${timeLeft}s`;
-    resultDisplay.textContent = '';
-    startButton.style.display = 'none';
-    replayButton.style.display = 'none';
-    gameContainer.style.display = 'block';
-
-    gameInterval = setInterval(() => {
-      timeLeft--;
+    function startGame() {
+      score = 0;
+      timeLeft = 60;
+      scoreDisplay.textContent = `Score: ${score}`;
       timerDisplay.textContent = `Time Left: ${timeLeft}s`;
-      if (timeLeft <= 0) endGame();
-    }, 1000);
+      resultDisplay.textContent = '';
+      startButton.style.display = 'none';
+      replayButton.style.display = 'none';
+      gameContainer.style.display = 'block';
 
-    dropInterval = setInterval(spawnDroplet, 800);
-  }
+      gameInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
 
-  function spawnDroplet() {
-    const droplet = document.createElement('div');
-    droplet.classList.add('droplet');
+      dropInterval = setInterval(spawnDroplet, 800);
+    }
 
-    const isDirty = Math.random() < 0.5;
-    if (isDirty) droplet.classList.add('dirty');
+    function spawnDroplet() {
+      const droplet = document.createElement('div');
+      droplet.classList.add('droplet');
 
-    const x = Math.random() * (gameContainer.offsetWidth - 40);
-    const y = Math.random() * (gameContainer.offsetHeight - 60);
-    droplet.style.left = `${x}px`;
-    droplet.style.top = `${y}px`;
+      const isDirty = Math.random() < 0.5;
+      if (isDirty) droplet.classList.add('dirty');
 
-    droplet.addEventListener('click', () => {
-      if (isDirty) {
-        score++;
-        scoreDisplay.textContent = `Score: ${score}`;
-      }
-      gameContainer.removeChild(droplet);
-    });
+      const x = Math.random() * (gameContainer.offsetWidth - 40);
+      const y = Math.random() * (gameContainer.offsetHeight - 60);
+      droplet.style.left = `${x}px`;
+      droplet.style.top = `${y}px`;
 
-    gameContainer.appendChild(droplet);
-
-    setTimeout(() => {
-      if (gameContainer.contains(droplet)) {
+      droplet.addEventListener('click', () => {
+        if (isDirty) {
+          score++;
+          scoreDisplay.textContent = `Score: ${score}`;
+        }
         gameContainer.removeChild(droplet);
-      }
-    }, 1500);
-  }
+      });
 
-  function endGame() {
-    clearInterval(gameInterval);
-    clearInterval(dropInterval);
-    resultDisplay.textContent = `Time's up! Your score: ${score}`;
-    replayButton.style.display = 'inline-block';
-    gameContainer.style.display = 'none';
+      gameContainer.appendChild(droplet);
 
-    const droplets = document.querySelectorAll('.droplet');
-    droplets.forEach(drop => drop.remove());
-  }
+      setTimeout(() => {
+        if (gameContainer.contains(droplet)) {
+          gameContainer.removeChild(droplet);
+        }
+      }, 1500);
+    }
 
-  startButton.addEventListener('click', startGame);
-  replayButton.addEventListener('click', startGame);
-</script>
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(dropInterval);
+      resultDisplay.textContent = `Time's up! Your score: ${score}`;
+      replayButton.style.display = 'inline-block';
+      gameContainer.style.display = 'none';
+
+      const droplets = document.querySelectorAll('.droplet');
+      droplets.forEach(drop => drop.remove());
+    }
+
+    startButton.addEventListener('click', startGame);
+    replayButton.addEventListener('click', startGame);
+  </script>
 
 </body>
 </html>
